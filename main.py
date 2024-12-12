@@ -28,7 +28,7 @@ with st.expander("🔍 About this app", expanded=False):
 
 st.sidebar.markdown("### Select the genre/theme of the story:")
 
-story_theme = st.sidebar.radio("Genre", ("Horror 👻", "Action 🏃‍♂️", "Romance ❤️", "Comedy 😂", "Historical ⏳", "Science Fiction 🚀"))
+story_theme = st.sidebar.radio("Genre", ("Horror 👻", "Action 🏃‍♂️", "Romance ❤️", "Comedy 😂", "Historical ⏳"))
 selected_theme = story_theme.split()[0].strip()  # Extract theme text without emojis
 
 theme_based_prompts = {
