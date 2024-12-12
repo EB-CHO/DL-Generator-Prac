@@ -54,6 +54,9 @@ if input_type == "Text ✏️":
         height=100,
         value="As the rain poured down on a quiet, dimly lit street, I found myself standing in front of a quaint bookstore"
     )
+    # Debugging output
+    st.write("Selected theme:", selected_theme)  # Show the selected theme
+    st.write("Available prompts:", list(theme_based_prompts.keys()))  # Show available keys in the dictionary
 
     theme_based_input = theme_based_prompts[selected_theme] + " " + input_text
 
