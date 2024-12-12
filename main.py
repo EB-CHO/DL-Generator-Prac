@@ -9,8 +9,7 @@ st.set_page_config(
 
 st.markdown(
     """
-    <h1 style='text-align: center; color: #FF4500;'>WordWhiz :closed_book:</h1>
-    <h2 style='text-align: center; color: #4CAF50;'>AI Story Generator :book:</h2>
+    <h1 style='text-align: center; color: #FF4500;'>My AI Storyteller 📚</h1>
     """, 
     unsafe_allow_html=True
 )
