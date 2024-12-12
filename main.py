@@ -29,12 +29,7 @@ with st.expander("🔍 About this app", expanded=False):
 st.sidebar.markdown("### Select the genre/theme of the story:")
 
 story_theme = st.sidebar.radio("Genre", ("Horror 👻", "Action 🏃‍♂️", "Romance ❤️", "Comedy 😂", "Historical ⏳", "Science Fiction 🚀"))
-selected_theme = story_theme.split()[0].strip() 
-
-# Debugging outputs
-st.write("Selected theme:", selected_theme)  # Output the selected theme
-st.write("Available prompts:", list(theme_based_prompts.keys()))  # Output the keys of theme_based_prompts
-
+selected_theme = story_theme.split()[0].strip()  # Extract theme text without emojis
 
 theme_based_prompts = {
     "Horror": "Write a horror story that ends mysteriously using: ",
@@ -59,9 +54,7 @@ if input_type == "Text ✏️":
         value="As the rain poured down on a quiet, dimly lit street, I found myself standing in front of a quaint bookstore"
     )
 
-    # Generate theme-based input
     theme_based_input = theme_based_prompts[selected_theme] + " " + input_text
-    st.write("Generated input:", theme_based_input)  # Output the generated input
 
     if st.button("🚀 Generate story"):
         with st.spinner("Generating your story... Please wait about 30-40 seconds."):
