@@ -45,7 +45,7 @@ st.markdown("## Choose the input type for generating the story")
 input_type = st.radio("Input type", ("Text ✏️", "Image 🖼️"))
 
 if input_type == "Text ✏️":
-    st.markdown("### Enter the sentences you want to have your story revolve around:")
+    st.markdown("### Enter the sentences you want to have your story:")
 
     input_text = st.text_area(
         "Enter the text here",
