@@ -31,6 +31,10 @@ st.sidebar.markdown("### Select the genre/theme of the story:")
 story_theme = st.sidebar.radio("Genre", ("Horror 👻", "Action 🏃‍♂️", "Romance ❤️", "Comedy 😂", "Historical ⏳", "Science Fiction 🚀"))
 selected_theme = story_theme.split()[0].strip() 
 
+# Debugging outputs
+st.write("Selected theme:", selected_theme)  # Output the selected theme
+st.write("Available prompts:", list(theme_based_prompts.keys()))  # Output the keys of theme_based_prompts
+
 
 theme_based_prompts = {
     "Horror": "Write a horror story that ends mysteriously using: ",
