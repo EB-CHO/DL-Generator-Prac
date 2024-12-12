@@ -61,7 +61,7 @@ if input_type == "Text ✏️":
         st.error("Selected theme is invalid. Please select a valid theme.")
 
     # Extract and display only the theme-based prompt (exclude user input)
-    displayed_input = theme_based_input.split(" using:")[0] + " using:"
+    displayed_input = theme_based_input.split(" using:")[0] 
     st.write("Generated Theme-based Input:", displayed_input)  # Debugging: 확인용 출력
 
     if st.button("🚀 Generate story"):
@@ -101,7 +101,7 @@ if input_type == "Image 🖼️":
                 st.error("Selected theme is invalid. Please select a valid theme.")
 
             # Extract and display only the theme-based prompt (exclude user input)
-            displayed_input = theme_based_input.split(" using:")[0] + " using:"
+            displayed_input = theme_based_input.split(" using:")[0] 
             st.write("Generated Theme-based Input:", displayed_input)  # Debugging
 
 
