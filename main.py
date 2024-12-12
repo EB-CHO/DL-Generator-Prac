@@ -32,12 +32,12 @@ story_theme = st.sidebar.radio("Genre", ("Horror 👻", "Action 🏃‍♂️", 
 selected_theme = story_theme.split()[0].strip()  # Extract theme text without emojis
 
 theme_based_prompts = {
-    "Horror": "Write a horror story that ends mysteriously using: ",
-    "Action": "Write a story with lots of action using: ",
-    "Romance": "Write a romantic story using: ",
-    "Comedy": "Write a funny story using: ",
-    "Historical": "Write a story based on a historical event with the help of the input: ",
-    "Science Fiction": "Write a science fiction story using: "
+    "Horror": "Write a horror story that ends mysteriously using:\n",
+    "Action": "Write a story with lots of action using:\n ",
+    "Romance": "Write a romantic story using:\n ",
+    "Comedy": "Write a funny story using:\n ",
+    "Historical": "Write a story based on a historical event with the help of the input:\n ",
+    "Science Fiction": "Write a science fiction story using:\n "
 }
 
 st.markdown("## Choose the input type for generating the story")
