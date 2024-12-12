@@ -30,7 +30,8 @@ with st.expander("🔍 About this app", expanded=False):
 st.sidebar.markdown("### Select the genre/theme of the story:")
 
 story_theme = st.sidebar.radio("Genre", ("Horror 👻", "Action 🏃‍♂️", "Romance ❤️", "Comedy 😂", "Historical ⏳", "Science Fiction 🚀"))
-selected_theme = story_theme.split(":")[0].strip()
+selected_theme = story_theme.split()[0].strip()  # 이모지를 제거하고 첫 번째 단어만 추출
+
 
 theme_based_prompts = {
     "Horror": "Write a horror story that ends mysteriously using: ",
