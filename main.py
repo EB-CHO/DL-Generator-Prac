@@ -1,7 +1,7 @@
 import streamlit as st
 
-from workflow_text_to_text import generate_story_from_text
-from workflow_image_to_text import generate_image_caption, generate_story_from_image_caption
+from text import generate_story_from_text
+from image import generate_image_caption, generate_story_from_image_caption
 
 st.set_page_config(
     page_title="AI Story Generator", layout="wide", page_icon="📖"
