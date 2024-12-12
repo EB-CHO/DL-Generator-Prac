@@ -45,7 +45,7 @@ st.markdown("## Choose the input type for generating the story")
 input_type = st.radio("Input type", ("Text ✏️", "Image 🖼️"))
 
 if input_type == "Text ✏️":
-    st.markdown("### Enter the sentences you want to have your story:")
+    st.markdown("### Enter the sentences you want to have your story revolve around:")
 
     input_text = st.text_area(
         "Enter the text here",
@@ -53,14 +53,16 @@ if input_type == "Text ✏️":
         value="As the rain poured down on a quiet, dimly lit street, I found myself standing in front of a quaint bookstore"
     )
 
-    # Ensure theme-based input is defined
+    # Generate theme-based input
     if selected_theme in theme_based_prompts:
         theme_based_input = theme_based_prompts[selected_theme] + " " + input_text
     else:
         theme_based_input = ""
         st.error("Selected theme is invalid. Please select a valid theme.")
 
-    st.write("Generated Theme-based Input:", theme_based_input)  # Debugging
+    # Extract and display only the theme-based prompt (exclude user input)
+    displayed_input = theme_based_input.split(" using:")[0] + " using:"
+    st.write("Generated Theme-based Input:", displayed_input)  # Debugging: 확인용 출력
 
     if st.button("🚀 Generate story"):
         if theme_based_input:
@@ -79,5 +81,28 @@ if input_type == "Text ✏️":
             
             with st.expander("📖 View story", expanded=True):
                 st.markdown(formatted_story)
+
+if input_type == "Image 🖼️":
+    st.markdown("### Upload the image you want your story to be based on:")
+
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
+
+    if uploaded_file is not None:
+        st.image(uploaded_file, caption="Uploaded Image", use_column_width=False, width=500)
+
+        if st.button("🚀 Generate story"):
+            file_bytes = uploaded_file.read()
+            caption = generate_image_caption(file_bytes)
+
+            if selected_theme in theme_based_prompts:
+                theme_based_input = theme_based_prompts[selected_theme] + " " + caption
+            else:
+                theme_based_input = ""
+                st.error("Selected theme is invalid. Please select a valid theme.")
+
+            # Extract and display only the theme-based prompt (exclude user input)
+            displayed_input = theme_based_input.split(" using:")[0] + " using:"
+            st.write("Generated Theme-based Input:", displayed_input)  # Debugging
+
 
 
