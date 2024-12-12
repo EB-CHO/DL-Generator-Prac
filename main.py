@@ -59,7 +59,9 @@ if input_type == "Text ✏️":
         value="As the rain poured down on a quiet, dimly lit street, I found myself standing in front of a quaint bookstore"
     )
 
+    # Generate theme-based input
     theme_based_input = theme_based_prompts[selected_theme] + " " + input_text
+    st.write("Generated input:", theme_based_input)  # Output the generated input
 
     if st.button("🚀 Generate story"):
         with st.spinner("Generating your story... Please wait about 30-40 seconds."):
