@@ -9,7 +9,7 @@ st.set_page_config(
 
 st.markdown(
     """
-    <h1 style='text-align: center; color: #FF4500;'>My AI Storyteller 📚</h1>
+    <h1 style='text-align: center; color: #FF4500;'>My AI Storyteller 📓</h1>
     """, 
     unsafe_allow_html=True
 )
@@ -19,8 +19,9 @@ with st.expander("🔍 About this app", expanded=False):
         """
         <p style='font-size:16px; color:#555;'>
         This app uses the <b>Clarifai AI</b> engine to generate stories based on the input you provide using <b>LLM</b> models. 
-        You can either upload an image or enter some text to get started. 
+        You can either upload an image or enter some text to get started! 
         The story will be generated based on the theme you choose, which can be selected from the sidebar.
+        Enjoy and generate a story ~!
         </p>
         """,
         unsafe_allow_html=True
@@ -37,7 +38,6 @@ theme_based_prompts = {
     "Romance": "Write a romantic story using:\n ",
     "Comedy": "Write a funny story using:\n ",
     "Historical": "Write a story based on a historical event with the help of the input:\n ",
-    "Science Fiction": "Write a science fiction story using:\n "
 }
 
 st.markdown("## Choose the input type for generating the story")
@@ -83,8 +83,6 @@ if input_type == "Text ✏️":
                 st.markdown(formatted_story)
 
 if input_type == "Image 🖼️":
-    st.markdown("### Upload the image you want your story to be based on:")
-
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
 
     if uploaded_file is not None:
@@ -92,16 +90,16 @@ if input_type == "Image 🖼️":
 
         if st.button("🚀 Generate story"):
             file_bytes = uploaded_file.read()
-            caption = generate_image_caption(file_bytes)
+            
+            # 이미지 캡션 생성
+            caption = generate_image_caption(file_bytes)  # WORKFLOW-ID-IMAGE 사용
 
-            if selected_theme in theme_based_prompts:
-                theme_based_input = theme_based_prompts[selected_theme] + " " + caption
-            else:
-                theme_based_input = ""
-                st.error("Selected theme is invalid. Please select a valid theme.")
+            # 사용자 입력과 결합하여 스토리 생성
+            user_input = "The scene reminded me of something strange."  # Replace with user input if applicable
+            combined_input = caption + " " + user_input
+            story = generate_story_from_image_caption(combined_input)  # WORKFLOW-ID-STORY-GPT4 사용
+            
+            st.write("Generated Story:", story)
 
-            # Extract and display only the theme-based prompt (exclude user input)
-            displayed_input = theme_based_input.split(" using:")[0] 
-            st.write("Generated Theme-based Input:", displayed_input)  # Debugging
 
 
