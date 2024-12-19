@@ -47,7 +47,7 @@ def generate_story_from_text(user_input):
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a creative story generator."},
                 {"role": "user", "content": user_input}
@@ -63,7 +63,7 @@ def generate_image_caption(image_bytes):
         image_base64 = base64.b64encode(image_bytes).decode('utf-8')
         prompt = f"Generate a caption for the following image (encoded in Base64): {image_base64}"
         response = openai.ChatCompletion.create(
-            model="gpt-3.5",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are an expert image caption generator."},
                 {"role": "user", "content": prompt}
@@ -77,7 +77,7 @@ def generate_story_from_image_caption(image_caption_with_user_input):
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a creative story generator."},
                 {"role": "user", "content": image_caption_with_user_input}
