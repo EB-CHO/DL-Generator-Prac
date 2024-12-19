@@ -1,70 +1,42 @@
+import openai
 import streamlit as st
-
-# Streamlit secrets
-USER_ID = st.secrets["USER_ID"]
-PAT = st.secrets["PAT"]
-APP_ID = st.secrets["APP_ID"]
-WORKFLOW_ID_IMAGE = st.secrets["WORKFLOW_ID_IMAGE"]
-WORKFLOW_ID_STORY_GPT3 = st.secrets["WORKFLOW_ID_STORY_GPT3"]
-
-from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
-from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
-from clarifai_grpc.grpc.api.status import status_code_pb2
+from PIL import Image
+import base64
 
 @st.cache_data(persist=True)
-def generate_image_caption(image):
-    channel = ClarifaiChannel.get_grpc_channel()
-    stub = service_pb2_grpc.V2Stub(channel)
-    metadata = (('authorization', 'Key ' + PAT),)
-    userDataObject = resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID)
+def generate_image_caption(image_bytes):
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-    post_workflow_results_response = stub.PostWorkflowResults(
-        service_pb2.PostWorkflowResultsRequest(
-            user_app_id=userDataObject,  
-            workflow_id=WORKFLOW_ID_IMAGE,
-            inputs=[
-                resources_pb2.Input(
-                    data=resources_pb2.Data(
-                        image=resources_pb2.Image(
-                            base64=image
-                        )
-                    )
-                )
+    try:
+        # 이미지 바이트를 Base64로 인코딩
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+
+        # GPT 모델을 사용해 캡션 생성
+        prompt = f"Generate a caption for the following image (encoded in Base64): {image_base64}"
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert image caption generator."},
+                {"role": "user", "content": prompt}
             ]
-        ),
-        metadata=metadata
-    )
-    if post_workflow_results_response.status.code != status_code_pb2.SUCCESS:
-        raise Exception("Post workflow results failed, status: " + post_workflow_results_response.status.description)
-
-    results = post_workflow_results_response.results[0]
-    return results.outputs[0].data.text.raw
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        raise Exception(f"OpenAI API call failed: {e}")
 
 @st.cache_data(persist=True)
 def generate_story_from_image_caption(image_caption_with_user_input):
-    channel = ClarifaiChannel.get_grpc_channel()
-    stub = service_pb2_grpc.V2Stub(channel)
-    userDataObject = resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID)
-    metadata = (('authorization', 'Key ' + PAT),)
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-    post_workflow_results_response = stub.PostWorkflowResults(
-        service_pb2.PostWorkflowResultsRequest(
-            user_app_id=userDataObject,  
-            workflow_id=WORKFLOW_ID_STORY_GPT3,
-            inputs=[
-                resources_pb2.Input(
-                    data=resources_pb2.Data(
-                        text=resources_pb2.Text(
-                            raw=image_caption_with_user_input
-                        )
-                    )
-                )
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a creative story generator."},
+                {"role": "user", "content": image_caption_with_user_input}
             ]
-        ),
-        metadata=metadata
-    )
-    if post_workflow_results_response.status.code != status_code_pb2.SUCCESS:
-        raise Exception("Post workflow results failed, status: " + post_workflow_results_response.status.description)
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        raise Exception(f"OpenAI API call failed: {e}")
 
-    results = post_workflow_results_response.results[0]
-    return results.outputs[0].data.text.raw
