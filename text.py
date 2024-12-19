@@ -44,3 +44,8 @@ def generate_story_from_text(user_input):
     results = post_workflow_results_response.results[0]
 
     return results.outputs[1].data.text.raw
+
+# text.py 또는 image.py의 함수 내부
+print(post_workflow_results_response)  # 전체 응답 확인
+print(post_workflow_results_response.status)  # 상태 확인
+print(post_workflow_results_response.results)  # 결과 데이터 확인
