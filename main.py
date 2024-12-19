@@ -1,7 +1,7 @@
 import streamlit as st
-
-from text import generate_story_from_text
-from image import generate_image_caption, generate_story_from_image_caption
+import openai
+from PIL import Image
+import base64
 
 st.set_page_config(
     page_title="AI Story Generator", layout="wide", page_icon="📖"
@@ -18,10 +18,9 @@ with st.expander("🔍 About this app", expanded=False):
     st.markdown(
         """
         <p style='font-size:16px; color:#555;'>
-        This app uses the <b>Clarifai AI</b> engine to generate stories based on the input you provide using <b>LLM</b> models. 
-        You can either upload an image or enter some text to get started! 
+        This app uses the <b>OpenAI GPT</b> engine to generate stories based on the input you provide using <b>LLM</b> models. 
+        You can either upload an image or enter some text to get started. 
         The story will be generated based on the theme you choose, which can be selected from the sidebar.
-        Enjoy and generate a story ~!
         </p>
         """,
         unsafe_allow_html=True
@@ -44,6 +43,50 @@ st.markdown("## Choose the input type for generating the story")
 
 input_type = st.radio("Input type", ("Text ✏️", "Image 🖼️"))
 
+def generate_story_from_text(user_input):
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5",
+            messages=[
+                {"role": "system", "content": "You are a creative story generator."},
+                {"role": "user", "content": user_input}
+            ]
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        raise Exception(f"OpenAI API call failed: {e}")
+
+def generate_image_caption(image_bytes):
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    try:
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        prompt = f"Generate a caption for the following image (encoded in Base64): {image_base64}"
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5",
+            messages=[
+                {"role": "system", "content": "You are an expert image caption generator."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        raise Exception(f"OpenAI API call failed: {e}")
+
+def generate_story_from_image_caption(image_caption_with_user_input):
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5",
+            messages=[
+                {"role": "system", "content": "You are a creative story generator."},
+                {"role": "user", "content": image_caption_with_user_input}
+            ]
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        raise Exception(f"OpenAI API call failed: {e}")
+
 if input_type == "Text ✏️":
     st.markdown("### Enter the sentences you want to have your story revolve around:")
 
@@ -53,34 +96,20 @@ if input_type == "Text ✏️":
         value="As the rain poured down on a quiet, dimly lit street, I found myself standing in front of a quaint bookstore"
     )
 
-    # Generate theme-based input
     if selected_theme in theme_based_prompts:
         theme_based_input = theme_based_prompts[selected_theme] + " " + input_text
     else:
         theme_based_input = ""
         st.error("Selected theme is invalid. Please select a valid theme.")
 
-    # Extract and display only the theme-based prompt (exclude user input)
-    displayed_input = theme_based_input.split(" using:")[0] 
-    st.write("Generated Theme-based Input:", displayed_input)  # Debugging: 확인용 출력
-
     if st.button("🚀 Generate story"):
         if theme_based_input:
             with st.spinner("Generating your story... Please wait about 30-40 seconds."):
                 try:
                     story = generate_story_from_text(theme_based_input)
-                    st.write("Generated Story:", story)  # Debugging
-                    if story.strip():
-                        story_lines = story.split('\n')
-                        formatted_story = "\n".join(["##### " + line for line in story_lines])
-                    else:
-                        formatted_story = "No story was generated. Please try again."
+                    st.write("Generated Story:", story)
                 except Exception as e:
                     st.error(f"Error generating story: {e}")
-                    formatted_story = "Error occurred while generating the story."
-            
-            with st.expander("📖 View story", expanded=True):
-                st.markdown(formatted_story)
 
 if input_type == "Image 🖼️":
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
@@ -90,27 +119,19 @@ if input_type == "Image 🖼️":
 
         if st.button("🚀 Generate story"):
             file_bytes = uploaded_file.read()
-            
             try:
-                # 이미지 캡션 생성
                 caption = generate_image_caption(file_bytes)
-                print("Generated Caption:", caption)  # Debugging: 캡션 확인
-                
-                # 사용자 입력과 결합하여 스토리 생성
-                user_input = "This reminds me of something mysterious."  # 사용자 입력 예제
-                combined_input = caption + " " + user_input
-                print("Combined Input for Story Generation:", combined_input)  # Debugging: 결합된 입력 확인
-                
-                story = generate_story_from_image_caption(combined_input)
-                print("Generated Story:", story)  # Debugging: 생성된 스토리 확인
-                
-                if story.strip():
-                    st.write("Generated Story:", story)
+                if selected_theme in theme_based_prompts:
+                    theme_based_input = theme_based_prompts[selected_theme] + " " + caption
                 else:
-                    st.error("No story was generated. Please try again.")
+                    theme_based_input = ""
+                    st.error("Selected theme is invalid. Please select a valid theme.")
+
+                story = generate_story_from_image_caption(theme_based_input)
+                st.write("Generated Story:", story)
             except Exception as e:
-                st.error(f"Error during generation: {e}")
-                print("Error:", e)
+                st.error(f"Error generating story: {e}")
+
 
 
 
