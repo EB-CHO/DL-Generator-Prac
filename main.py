@@ -91,15 +91,26 @@ if input_type == "Image 🖼️":
         if st.button("🚀 Generate story"):
             file_bytes = uploaded_file.read()
             
-            # 이미지 캡션 생성
-            caption = generate_image_caption(file_bytes)  # WORKFLOW-ID-IMAGE 사용
-
-            # 사용자 입력과 결합하여 스토리 생성
-            user_input = "The scene reminded me of something strange."  # Replace with user input if applicable
-            combined_input = caption + " " + user_input
-            story = generate_story_from_image_caption(combined_input)  # WORKFLOW-ID-STORY-GPT4 사용
-            
-            st.write("Generated Story:", story)
+            try:
+                # 이미지 캡션 생성
+                caption = generate_image_caption(file_bytes)
+                print("Generated Caption:", caption)  # Debugging: 캡션 확인
+                
+                # 사용자 입력과 결합하여 스토리 생성
+                user_input = "This reminds me of something mysterious."  # 사용자 입력 예제
+                combined_input = caption + " " + user_input
+                print("Combined Input for Story Generation:", combined_input)  # Debugging: 결합된 입력 확인
+                
+                story = generate_story_from_image_caption(combined_input)
+                print("Generated Story:", story)  # Debugging: 생성된 스토리 확인
+                
+                if story.strip():
+                    st.write("Generated Story:", story)
+                else:
+                    st.error("No story was generated. Please try again.")
+            except Exception as e:
+                st.error(f"Error during generation: {e}")
+                print("Error:", e)
 
 
 
