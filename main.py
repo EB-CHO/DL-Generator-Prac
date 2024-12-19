@@ -68,19 +68,22 @@ if input_type == "Text ✏️":
         if theme_based_input:
             with st.spinner("Generating your story... Please wait about 30-40 seconds."):
                 try:
+                    print("Input to API:", theme_based_input)  # 입력 확인
                     story = generate_story_from_text(theme_based_input)
-                    st.write("Generated Story:", story)  # Debugging
-                    if story.strip():
-                        story_lines = story.split('\n')
-                        formatted_story = "\n".join(["##### " + line for line in story_lines])
-                    else:
-                        formatted_story = "No story was generated. Please try again."
-                except Exception as e:
-                    st.error(f"Error generating story: {e}")
-                    formatted_story = "Error occurred while generating the story."
-            
-            with st.expander("📖 View story", expanded=True):
-                st.markdown(formatted_story)
+                    print("API Response:", story)  # 응답 확인
+
+                if story and story.strip():
+                    story_lines = story.split('\n')
+                    formatted_story = "\n".join(["##### " + line for line in story_lines])
+                else:
+                    formatted_story = "No story was generated. Please try again."
+            except Exception as e:
+                st.error(f"Error generating story: {e}")
+                formatted_story = "Error occurred while generating the story."
+
+        with st.expander("📖 View story", expanded=True):
+            st.markdown(formatted_story)
+
 
 if input_type == "Image 🖼️":
     st.markdown("### Upload the image you want your story to be based on:")
